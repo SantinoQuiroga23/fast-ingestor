@@ -1,0 +1,32 @@
+[package]
+name = "fast_ingestor"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "_lib_ingestor"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+arrow = { version = "60.0.0", features = ["ffi", "pyarrow"] }
+arrow-schema = "60.0.0"
+axum = { version = "0.8.9", features = ["macros"] }
+crossbeam-channel = "0.5.17"
+pyo3 = { version = "0.29.0", features = ["extension-module"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+subtle = "2.6.1"
+thiserror = "2.0.21"
+tokio = { version = "1.53.1", features = ["full"] }
+tower-http = { version = "0.7.1", features = ["limit"] }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+
+[dev-dependencies]
+http-body-util = "0.1.5"
+tower = "0.5.3"
