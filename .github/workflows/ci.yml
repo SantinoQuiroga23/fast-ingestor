@@ -22,7 +22,7 @@ jobs:
         with:
           components: clippy
 
-      - name: Cache cargo registry
+      - name: Cache cargo
         uses: actions/cache@v4
         with:
           path: |
@@ -32,12 +32,6 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
-
-      - name: Check formatting
-        run: cargo fmt --all -- --check
-        continue-on-error: true
 
       - name: Run clippy
         run: cargo clippy --all-targets -- -D warnings
@@ -64,7 +58,7 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache cargo registry
+      - name: Cache cargo
         uses: actions/cache@v4
         with:
           path: |
@@ -74,22 +68,23 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-py${{ matrix.python-version }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-py${{ matrix.python-version }}-
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install maturin pytest pytest-asyncio httpx polars pyarrow
+          pip install maturin pytest httpx polars pyarrow
 
-      - name: Build and install package
-        run: maturin develop --release
+      - name: Build wheel
+        run: maturin build --release --out dist
+
+      - name: Install wheel
+        run: pip install dist/*.whl
 
       - name: Verify installation
-        run: python -c "from fast_ingestor import FastIngestor; print('Import OK')"
+        run: python -c "from fast_ingestor import FastIngestor; print('✅ Import OK')"
 
       - name: Run Python tests
-        run: pytest tests/test_python_api.py -v --tb=short
+        run: pytest tests/test_python_api.py -v
 
   test-windows:
     name: Windows Build
@@ -108,8 +103,11 @@ jobs:
       - name: Install maturin
         run: pip install maturin
 
-      - name: Build package
-        run: maturin develop --release
+      - name: Build wheel
+        run: maturin build --release --out dist
+
+      - name: Install wheel
+        run: pip install dist\*.whl
 
       - name: Smoke test
-        run: python -c "from fast_ingestor import FastIngestor; print('Windows import OK')"
+        run: python -c "from fast_ingestor import FastIngestor; print('✅ Windows import OK')"
