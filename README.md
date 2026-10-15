@@ -4,10 +4,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Tests](<https://img.shields.io/badge/tests-34%20passing-brightgreen.svg>)]()
+[![CI](https://github.com/SantinoQuiroga23/fast-ingestor/actions/workflows/ci.yml/badge.svg)](https://github.com/TU-USUARIO/fast-ingestor/actions)
 
 > High-throughput telemetry ingestion server with zero-copy Arrow FFI.
-> Handles thousands of req/sec on a $5/month VPS. **No Kafka. No Redis. No Elixir.**
+> Handles thounsands of req/sec on a $5/month VPS. **No Kafka. No Redis. No Elixir.**
 
 ---
 
@@ -22,28 +22,31 @@ Traditional Python backends struggle with high-volume telemetry:
 Most teams end up with:
 
 Client → FastAPI → Redis → Worker → PostgreSQL
-
-             ↑              ↑
-         (slow JSON)    (slow JSON)
+            ↑              ↑
+        (slow JSON)    (slow JSON)
 
 **FastIngestor collapses this into:**
 
 Client → Rust Server → Bounded Queue → Arrow FFI → Python (Polars)
-              ↑                        ↑
-       (fast serde_json)         (zero-copy, no serialization)
+             ↑                        ↑
+      (fast serde_json)         (zero-copy, no serialization)
 
+```
 
 ---
+
 ## Features
 
 - 🦀 **Rust core**: Tokio + Axum for high-performance HTTP
-- 🐍 **Python bindings**: PuyO3 for seamless integration with data tools
+- 🐍 **Python bindings**: PUTyO3 for seamless integration with data tools
 - ⚡ **Zero-copy FFI**: Arrow C Data Interface to Polars/Pandas (no serialization overhead)
 - 🛡️ **Built-in backpressure**: Bounded queue + HTTP 503 when full (prevents OOM)
 - 🔒 **Secure by default**: Constant-time API key auth, body size limits, domain validation
 - 📦 **Self-contained**: No external services (Kafka, Redis, Elixir) required
 - 🎯 **Clean architecture**: Domain layer decoupled from infrastructure (easy to test and extend)
+
 ---
+
 ## Quick Start
 
 ### Installation
@@ -235,7 +238,7 @@ pip install fast-ingestor
 ### From source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/fast-ingestor.git
+git clone https://github.com/TU-USUARIO/fast-ingestor.git
 cd fast-ingestor
 pip install maturin
 maturin develop --release
@@ -372,10 +375,3 @@ MIT. See [LICENSE](LICENSE).
 Built to solve a real problem: teams spending $50+/month on Redis + workers just to buffer a few thousand req/sec of telemetry. FastIngestor proves that a single VPS with the right architecture can handle IoT-scale ingestion without external dependencies.
 
 The Rust core handles what Rust is best at (I/O concurrency, fast parsing, memory safety). Python handles what Python is best at (data analysis with Polars/Pandas). Arrow FFI bridges them with zero overhead.
-
-
-## Qué hacer después
-
-1. **Reemplaza `YOUR_USERNAME`** en la sección de instalación con tu usuario real de GitHub
-2. **Actualiza los números de benchmarks** con los resultados reales que obtengas de `cargo run --release --example throughput_bench`
-3. **Agrega badges reales** cuando subas a GitHub (los de tests passing y build status requieren Actions)

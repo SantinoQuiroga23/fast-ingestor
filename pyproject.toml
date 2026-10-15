@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "fast-ingestor"
-version = "0.1.1"
+version = "0.1.0"
 description = "High-throughput telemetry ingestion server with zero-copy Arrow FFI"
 readme = "README.md"
 requires-python = ">=3.9"
