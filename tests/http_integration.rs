@@ -4,6 +4,7 @@
 //! binding a real TCP port.
 
 use axum::body::Body;
+use axum::extract::DefaultBodyLimit;
 use axum::http::{Request, StatusCode};
 use std::sync::Arc;
 use tower::ServiceExt;
@@ -127,19 +128,21 @@ async fn rejects_when_queue_full() {
 
 #[tokio::test]
 async fn rejects_oversized_body() {
-    let router = build_router(test_state(10));
+    // Use a small body limit (4KB) for this specific test
+    let state = test_state(10);
+    let router = build_router(state).layer(DefaultBodyLimit::max(4096));
 
-    // Create a body larger than 4KB
+    // Body exceeds the 4KB limit
     let large_body = "x".repeat(5000);
-
-    let request = Request::builder()
-        .method("POST")
-        .uri("/ingest")
-        .header("Content-Type", "application/json")
-        .header("X-API-Key", TEST_API_KEY)
-        .body(Body::from(large_body))
-        .unwrap();
-
+    
+    let request: Request<Body> = Request::builder()
+                .method("POST")
+                .uri("/ingest")
+                .header("Content-Type", "application/json")
+                .header("X-API-Key", TEST_API_KEY)
+                .body(Body::from(large_body))
+                .unwrap();
     let response = router.oneshot(request).await.unwrap();
+
     assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
 }

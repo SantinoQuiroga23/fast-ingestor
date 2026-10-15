@@ -11,22 +11,23 @@ use tower_http::limit::RequestBodyLimitLayer;
 use crate::infrastructure::http::handlers::{ingest_handler, AppState};
 use crate::infrastructure::http::security::auth_middleware;
 
-/// Maximum allowed body size in bytes (1 MB).
-const MAX_BODY_BYTES: usize = 1024 * 1024;
+/// Default maximum body size in bytes (2 MB).
+pub const DEFAULT_MAX_BODY_BYTES: usize = 2 * 1024 * 1024;
 
-/// Builds the Axum router with the full middleware stack.
-///
-/// Middleware order (applied bottom-up in Axum):
-/// 1. Body limit
-/// 2. Authentication
-/// 3. Route handler
+/// Builds the Axum router with the default middleware stack.
 pub fn build_router(state: Arc<AppState>) -> Router {
+    build_router_with_limit(state, DEFAULT_MAX_BODY_BYTES)
+}
+
+/// Builds the Axum router with a custom body size limit.
+/// Useful for tests that need to verify backpressure behavior.
+pub fn build_router_with_limit(state: Arc<AppState>, max_body_bytes: usize) -> Router {
     Router::new()
         .route("/ingest", post(ingest_handler))
         .layer(middleware::from_fn_with_state(
             state.clone(),
             auth_middleware,
         ))
-        .layer(RequestBodyLimitLayer::new(MAX_BODY_BYTES))
+        .layer(RequestBodyLimitLayer::new(max_body_bytes))
         .with_state(state)
 }
