@@ -86,28 +86,33 @@ jobs:
       - name: Run Python tests
         run: pytest tests/test_python_api.py -v
 
-  test-windows:
-    name: Windows Build
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
+    test-windows:
+      name: Windows Build
+      runs-on: windows-latest
+      steps:
+        - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+        - name: Set up Python
+          uses: actions/setup-python@v5
+          with:
+            python-version: "3.11"
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        - name: Install Rust toolchain
+          uses: dtolnay/rust-toolchain@stable
 
-      - name: Install maturin
-        run: pip install maturin
+        - name: Install maturin
+          run: pip install maturin
+          shell: pwsh
 
-      - name: Build wheel
-        run: maturin build --release --out dist
+        - name: Build wheel
+          run: maturin build --release --out dist
+          shell: pwsh
 
-      - name: Install wheel
-        run: pip install dist\*.whl
+        - name: Install wheel
+          run: pip install dist/*.whl
+          shell: bash
+          # ↑ shell: bash hace que el wildcard * funcione correctamente
 
-      - name: Smoke test
-        run: python -c "from fast_ingestor import FastIngestor; print('✅ Windows import OK')"
+        - name: Smoke test
+          run: python -c "from fast_ingestor import FastIngestor; print('✅ Windows import OK')"
+          shell: pwsh
