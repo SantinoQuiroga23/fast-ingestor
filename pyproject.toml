@@ -3,15 +3,74 @@ requires = ["maturin>=1.5,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "fast_ingestor"
+name = "fast-ingestor"
 version = "0.1.0"
+description = "High-throughput telemetry ingestion server with zero-copy Arrow FFI"
+readme = "README.md"
 requires-python = ">=3.9"
-dependencies = [
-    "pyarrow>=25.0.0",
-    "polars>=1.44.2",
+license = { text = "MIT" }
+authors = [
+    { name = "FastIngestor Contributors" }
 ]
+keywords = [
+    "telemetry",
+    "ingestion",
+    "iot",
+    "high-throughput",
+    "arrow",
+    "zero-copy",
+    "polars",
+    "rust",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Topic :: Database",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: System :: Monitoring",
+]
+dependencies = [
+    "pyarrow>=15.0.0",
+    "polars>=0.20.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "httpx>=0.25",
+    "psutil>=5.9",
+    "tqdm>=4.66",
+]
+benchmark = [
+    "httpx>=0.25",
+    "psutil>=5.9",
+]
+
+[project.urls]
+Homepage = "https://github.com/TU-USUARIO/fast-ingestor"
+Documentation = "https://github.com/TU-USUARIO/fast-ingestor#readme"
+Repository = "https://github.com/TU-USUARIO/fast-ingestor"
+Issues = "https://github.com/TU-USUARIO/fast-ingestor/issues"
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
 python-source = "python"
 module-name = "fast_ingestor._lib_ingestor"
+bindings = "pyo3"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

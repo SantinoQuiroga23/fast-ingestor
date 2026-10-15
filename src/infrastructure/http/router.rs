@@ -11,8 +11,8 @@ use tower_http::limit::RequestBodyLimitLayer;
 use crate::infrastructure::http::handlers::{ingest_handler, AppState};
 use crate::infrastructure::http::security::auth_middleware;
 
-/// Maximum allowed body size in bytes (4 KB).
-const MAX_BODY_BYTES: usize = 4096;
+/// Maximum allowed body size in bytes (1 MB).
+const MAX_BODY_BYTES: usize = 1024 * 1024;
 
 /// Builds the Axum router with the full middleware stack.
 ///
